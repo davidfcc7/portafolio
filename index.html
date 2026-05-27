@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David Caicedo · Ciberseguridad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #111418;
+    --bg3: #1a1f26;
+    --accent: #00e5a0;
+    --accent2: #0ff;
+    --text: #e8edf2;
+    --muted: #7a8794;
+    --border: rgba(0,229,160,0.15);
+    --border2: rgba(255,255,255,0.06);
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,12,15,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border2);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.05em; }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; font-family: var(--mono); letter-spacing: 0.04em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    padding: 6rem 2rem 5rem;
+    max-width: 860px; margin: 0 auto;
+    position: relative;
+  }
+  .hero-tag {
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-tag::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .hero h1 {
+    font-family: var(--mono); font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700; line-height: 1.1;
+    color: var(--text); margin-bottom: 0.5rem;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--muted); margin: 1.5rem 0 2.5rem;
+    max-width: 540px; line-height: 1.7; font-weight: 300;
+  }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2.5rem; }
+  .badge {
+    font-family: var(--mono); font-size: 11px; padding: 5px 12px;
+    border: 1px solid var(--border); color: var(--accent);
+    border-radius: 2px; letter-spacing: 0.06em;
+  }
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 13px;
+    color: var(--bg); background: var(--accent);
+    padding: 10px 20px; border-radius: 2px;
+    text-decoration: none; letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+    cursor: pointer; border: none;
+  }
+  .cta:hover { opacity: 0.85; }
+
+  /* SECTIONS */
+  section { padding: 4rem 2rem; max-width: 860px; margin: 0 auto; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 2.5rem;
+  }
+  .section-num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; }
+  .section-title { font-family: var(--mono); font-size: 1.1rem; font-weight: 500; }
+  .section-line { flex: 1; height: 1px; background: var(--border2); }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--accent);
+    border-radius: 4px 0 0 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .card:hover { border-color: var(--border); }
+  .card:hover::before { opacity: 1; }
+
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px; }
+  .card-title { font-size: 1rem; font-weight: 500; color: var(--text); }
+  .card-company { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-bottom: 0.35rem; }
+  .card-date { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .card-body { font-size: 0.875rem; color: var(--muted); line-height: 1.7; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1rem; }
+  .tag {
+    font-family: var(--mono); font-size: 10px; padding: 3px 8px;
+    background: rgba(0,229,160,0.07); color: var(--accent);
+    border-radius: 2px; letter-spacing: 0.04em;
+  }
+
+  /* CERTS GRID */
+  .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+  .cert-card {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 4px; padding: 1.25rem;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color 0.2s;
+  }
+  .cert-card:hover { border-color: var(--border); }
+  .cert-icon { font-size: 20px; color: var(--accent); font-family: var(--mono); }
+  .cert-name { font-size: 0.9rem; font-weight: 500; }
+  .cert-issuer { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .cert-status {
+    display: inline-block; font-family: var(--mono); font-size: 10px;
+    padding: 2px 8px; border-radius: 2px; align-self: flex-start; letter-spacing: 0.06em;
+  }
+  .status-done { background: rgba(0,229,160,0.1); color: var(--accent); }
+  .status-progress { background: rgba(0,200,255,0.1); color: var(--accent2); }
+
+  /* LABS */
+  .lab-card {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 4px; padding: 1.25rem;
+    margin-bottom: 1rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .lab-card:hover { border-color: var(--border); }
+  .lab-num { font-family: var(--mono); font-size: 11px; color: var(--muted); padding-top: 3px; min-width: 28px; }
+  .lab-content { flex: 1; }
+  .lab-title { font-size: 0.95rem; font-weight: 500; margin-bottom: 4px; }
+  .lab-platform { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 6px; }
+  .lab-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .lab-skills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+
+  /* CONTACT */
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+  .contact-item {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 4px; padding: 1rem 1.25rem;
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; transition: border-color 0.2s;
+  }
+  .contact-item:hover { border-color: var(--border); }
+  .contact-icon { font-size: 16px; color: var(--accent); }
+  .contact-label { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+  .contact-value { font-size: 13px; color: var(--text); font-weight: 500; }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 2.5rem;
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    border-top: 1px solid var(--border2);
+    letter-spacing: 0.06em;
+  }
+
+  /* EDIT MODE */
+  .edit-btn {
+    position: fixed; bottom: 24px; right: 24px; z-index: 200;
+    background: var(--accent); color: var(--bg);
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em;
+    padding: 10px 18px; border: none; border-radius: 2px;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .edit-btn:hover { opacity: 0.85; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.7); align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2rem; width: 100%; max-width: 600px;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal h3 { font-family: var(--mono); font-size: 14px; color: var(--accent); margin-bottom: 1.5rem; letter-spacing: 0.06em; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.06em; }
+  .field input, .field textarea, .field select {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); font-family: var(--sans); font-size: 14px;
+    padding: 8px 12px; border-radius: 3px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); }
+  .field textarea { min-height: 80px; resize: vertical; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
+  .btn-save {
+    background: var(--accent); color: var(--bg);
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em;
+    padding: 9px 18px; border: none; border-radius: 2px; cursor: pointer;
+  }
+  .btn-cancel {
+    background: transparent; color: var(--muted);
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em;
+    padding: 9px 18px; border: 1px solid var(--border2); border-radius: 2px; cursor: pointer;
+  }
+  .section-add-btn {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    background: transparent; border: 1px dashed var(--border);
+    padding: 8px 16px; border-radius: 3px; cursor: pointer;
+    letter-spacing: 0.06em; transition: background 0.2s; margin-top: 0.5rem;
+  }
+  .section-add-btn:hover { background: rgba(0,229,160,0.05); }
+  .delete-btn {
+    background: transparent; border: none; color: var(--muted);
+    font-size: 12px; cursor: pointer; font-family: var(--mono);
+    float: right; padding: 2px 6px;
+    transition: color 0.2s;
+  }
+  .delete-btn:hover { color: #ff6b6b; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">david@security:~$</span>
+  <div class="nav-links">
+    <a href="#experiencia">experiencia</a>
+    <a href="#certificaciones">certs</a>
+    <a href="#laboratorios">labs</a>
+    <a href="#contacto">contacto</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Ciberseguridad · AppSec · Ethical Hacking</div>
+  <h1>David<br><span>Caicedo.</span></h1>
+  <p class="hero-sub">Ingeniero de Sistemas con Especialización en Ciberseguridad. 5+ años en desarrollo web bancario. Enfocado en seguridad ofensiva, hardening y detección de amenazas.</p>
+  <div class="hero-badges">
+    <span class="badge">Ethical Hacker · Cisco</span>
+    <span class="badge">OWASP Top 10</span>
+    <span class="badge">Linux Hardening</span>
+    <span class="badge">AWS Security</span>
+    <span class="badge">TryHackMe</span>
+  </div>
+  <a href="#contacto" class="cta">Contactar →</a>
+</div>
+
+<!-- EXPERIENCIA -->
+<section id="experiencia">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">Experiencia</span>
+    <div class="section-line"></div>
+  </div>
+  <div id="exp-list">
+    <div class="card" data-id="e0">
+      <button class="delete-btn" onclick="deleteItem('exp-list','e0')">✕</button>
+      <div class="card-header">
+        <div>
+          <div class="card-company">Gou Payments · Grupo Aval / Banco Popular</div>
+          <div class="card-title">Web Engineer</div>
+        </div>
+        <div class="card-date">Ago 2025 – Actual</div>
+      </div>
+      <div class="card-body">Implementación de componentes frontend en entorno bancario regulado. Revisión de código con estándares de desarrollo seguro. Exposición directa a control de acceso y protección de datos sensibles en plataformas financieras de alto tráfico.</div>
+      <div class="card-tags">
+        <span class="tag">Secure coding</span><span class="tag">Data protection</span><span class="tag">Scrum</span><span class="tag">Jira</span>
+      </div>
+    </div>
+    <div class="card" data-id="e1">
+      <button class="delete-btn" onclick="deleteItem('exp-list','e1')">✕</button>
+      <div class="card-header">
+        <div>
+          <div class="card-company">AVC · Grupo Aval</div>
+          <div class="card-title">Desarrollador Web</div>
+        </div>
+        <div class="card-date">Feb 2022 – Ago 2025</div>
+      </div>
+      <div class="card-body">Desarrollo y mantenimiento de interfaces en ecosistema bancario. Cumplimiento de políticas de seguridad corporativas. Identificación de vectores de ataque XSS/CSRF en interfaces frontend.</div>
+      <div class="card-tags">
+        <span class="tag">XSS/CSRF</span><span class="tag">HTML/CSS/JS</span><span class="tag">Banca</span>
+      </div>
+    </div>
+    <div class="card" data-id="e2">
+      <button class="delete-btn" onclick="deleteItem('exp-list','e2')">✕</button>
+      <div class="card-header">
+        <div>
+          <div class="card-company">Ink Agencia Digital</div>
+          <div class="card-title">Desarrollador Web & Administrador de Servidores</div>
+        </div>
+        <div class="card-date">Mar 2019 – Jul 2021</div>
+      </div>
+      <div class="card-body">Administración de servidores Linux: migración de sitios y bases de datos con criterios de seguridad, integridad y continuidad. Gestión de superficie de ataque en entornos CMS WordPress.</div>
+      <div class="card-tags">
+        <span class="tag">Linux</span><span class="tag">Hardening</span><span class="tag">WordPress</span><span class="tag">PHP</span>
+      </div>
+    </div>
+  </div>
+  <button class="section-add-btn" onclick="openModal('exp')">+ agregar experiencia</button>
+</section>
+
+<!-- CERTIFICACIONES -->
+<section id="certificaciones">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Certificaciones</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="certs-grid" id="cert-list">
+    <div class="cert-card" data-id="c0">
+      <button class="delete-btn" onclick="deleteItem('cert-list','c0')">✕</button>
+      <div class="cert-icon">[EC]</div>
+      <div class="cert-name">Ethical Hacker</div>
+      <div class="cert-issuer">Cisco Networking Academy</div>
+      <span class="cert-status status-done">Completada</span>
+    </div>
+    <div class="cert-card" data-id="c1">
+      <button class="delete-btn" onclick="deleteItem('cert-list','c1')">✕</button>
+      <div class="cert-icon">[SC]</div>
+      <div class="cert-name">Especialización en Ciberseguridad</div>
+      <div class="cert-issuer">Escuela de Comunicaciones Militares</div>
+      <span class="cert-status status-done">Completada</span>
+    </div>
+    <div class="cert-card" data-id="c2">
+      <button class="delete-btn" onclick="deleteItem('cert-list','c2')">✕</button>
+      <div class="cert-icon">[AWS]</div>
+      <div class="cert-name">AWS Cloud Practitioner</div>
+      <div class="cert-issuer">Amazon Web Services</div>
+      <span class="cert-status status-progress">En curso</span>
+    </div>
+    <div class="cert-card" data-id="c3">
+      <button class="delete-btn" onclick="deleteItem('cert-list','c3')">✕</button>
+      <div class="cert-icon">[AI]</div>
+      <div class="cert-name">Diplomado en Inteligencia Artificial</div>
+      <div class="cert-issuer">Escuela de Comunicaciones Militares</div>
+      <span class="cert-status status-done">Completada</span>
+    </div>
+  </div>
+  <button class="section-add-btn" onclick="openModal('cert')" style="margin-top:1rem">+ agregar certificación</button>
+</section>
+
+<!-- LABORATORIOS -->
+<section id="laboratorios">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">Laboratorios</span>
+    <div class="section-line"></div>
+  </div>
+  <div id="lab-list">
+    <div class="lab-card" data-id="l0">
+      <div class="lab-num">01</div>
+      <div class="lab-content">
+        <button class="delete-btn" onclick="deleteItem('lab-list','l0')">✕</button>
+        <div class="lab-title">Pre-Security Path</div>
+        <div class="lab-platform">TryHackMe</div>
+        <div class="lab-desc">Fundamentos de redes, sistemas operativos y conceptos de ciberseguridad ofensiva y defensiva. En progreso activo.</div>
+        <div class="lab-skills"><span class="tag">Redes</span><span class="tag">Linux</span><span class="tag">Web Security</span></div>
+      </div>
+    </div>
+  </div>
+  <button class="section-add-btn" onclick="openModal('lab')">+ agregar laboratorio</button>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">Contacto</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-grid">
+    <a class="contact-item" href="mailto:davidfcc7@gmail.com">
+      <span class="contact-icon">@</span>
+      <div><div class="contact-label">Email</div><div class="contact-value">davidfcc7@gmail.com</div></div>
+    </a>
+    <a class="contact-item" href="https://linkedin.com/in/davidfcaicedo">
+      <span class="contact-icon">in</span>
+      <div><div class="contact-label">LinkedIn</div><div class="contact-value">davidfcaicedo</div></div>
+    </a>
+    <div class="contact-item">
+      <span class="contact-icon">#</span>
+      <div><div class="contact-label">TryHackMe</div><div class="contact-value">Perfil activo</div></div>
+    </div>
+    <div class="contact-item">
+      <span class="contact-icon">☎</span>
+      <div><div class="contact-label">Teléfono</div><div class="contact-value">305 880 4870</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  david felipe caicedo canchón · ciberseguridad · 2026
+</footer>
+
+<!-- MODALES -->
+<div class="modal-overlay" id="modal-exp">
+  <div class="modal">
+    <h3>// nueva experiencia</h3>
+    <div class="field"><label>Empresa</label><input id="e-company" type="text" placeholder="Ej: Grupo Aval"></div>
+    <div class="field"><label>Rol</label><input id="e-role" type="text" placeholder="Ej: Analista de Seguridad"></div>
+    <div class="field"><label>Fechas</label><input id="e-date" type="text" placeholder="Ej: Ene 2024 – Actual"></div>
+    <div class="field"><label>Descripción</label><textarea id="e-desc" placeholder="¿Qué hiciste? Enfócate en aspectos de seguridad."></textarea></div>
+    <div class="field"><label>Tecnologías (separadas por coma)</label><input id="e-tags" type="text" placeholder="Ej: Nmap, Burp Suite, OWASP"></div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveExp()">Guardar</button>
+      <button class="btn-cancel" onclick="closeModal('modal-exp')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-cert">
+  <div class="modal">
+    <h3>// nueva certificación</h3>
+    <div class="field"><label>Nombre</label><input id="c-name" type="text" placeholder="Ej: CompTIA Security+"></div>
+    <div class="field"><label>Emisor</label><input id="c-issuer" type="text" placeholder="Ej: CompTIA"></div>
+    <div class="field"><label>Estado</label>
+      <select id="c-status">
+        <option value="done">Completada</option>
+        <option value="progress">En curso</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveCert()">Guardar</button>
+      <button class="btn-cancel" onclick="closeModal('modal-cert')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-lab">
+  <div class="modal">
+    <h3>// nuevo laboratorio</h3>
+    <div class="field"><label>Nombre del lab / reto</label><input id="l-name" type="text" placeholder="Ej: Pickle Rick CTF"></div>
+    <div class="field"><label>Plataforma</label><input id="l-platform" type="text" placeholder="Ej: TryHackMe / HackTheBox"></div>
+    <div class="field"><label>Descripción</label><textarea id="l-desc" placeholder="¿Qué aprendiste? ¿Qué técnicas usaste?"></textarea></div>
+    <div class="field"><label>Skills (separadas por coma)</label><input id="l-skills" type="text" placeholder="Ej: SQLi, privilege escalation, Nmap"></div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveLab()">Guardar</button>
+      <button class="btn-cancel" onclick="closeModal('modal-lab')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let expCount = 3, certCount = 4, labCount = 1;
+
+function openModal(type) {
+  document.getElementById('modal-' + type).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function saveExp() {
+  const company = document.getElementById('e-company').value.trim();
+  const role = document.getElementById('e-role').value.trim();
+  const date = document.getElementById('e-date').value.trim();
+  const desc = document.getElementById('e-desc').value.trim();
+  const tags = document.getElementById('e-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+  if (!role) return;
+  const id = 'e' + expCount++;
+  const tagsHtml = tags.map(t => `<span class="tag">${t}</span>`).join('');
+  const card = `<div class="card" data-id="${id}">
+    <button class="delete-btn" onclick="deleteItem('exp-list','${id}')">✕</button>
+    <div class="card-header"><div>
+      <div class="card-company">${company}</div>
+      <div class="card-title">${role}</div>
+    </div><div class="card-date">${date}</div></div>
+    <div class="card-body">${desc}</div>
+    <div class="card-tags">${tagsHtml}</div>
+  </div>`;
+  document.getElementById('exp-list').insertAdjacentHTML('beforeend', card);
+  ['e-company','e-role','e-date','e-desc','e-tags'].forEach(id => document.getElementById(id).value = '');
+  closeModal('modal-exp');
+}
+
+function saveCert() {
+  const name = document.getElementById('c-name').value.trim();
+  const issuer = document.getElementById('c-issuer').value.trim();
+  const status = document.getElementById('c-status').value;
+  if (!name) return;
+  const id = 'c' + certCount++;
+  const statusClass = status === 'done' ? 'status-done' : 'status-progress';
+  const statusLabel = status === 'done' ? 'Completada' : 'En curso';
+  const card = `<div class="cert-card" data-id="${id}">
+    <button class="delete-btn" onclick="deleteItem('cert-list','${id}')">✕</button>
+    <div class="cert-icon">[✓]</div>
+    <div class="cert-name">${name}</div>
+    <div class="cert-issuer">${issuer}</div>
+    <span class="cert-status ${statusClass}">${statusLabel}</span>
+  </div>`;
+  document.getElementById('cert-list').insertAdjacentHTML('beforeend', card);
+  document.getElementById('c-name').value = '';
+  document.getElementById('c-issuer').value = '';
+  closeModal('modal-cert');
+}
+
+function saveLab() {
+  const name = document.getElementById('l-name').value.trim();
+  const platform = document.getElementById('l-platform').value.trim();
+  const desc = document.getElementById('l-desc').value.trim();
+  const skills = document.getElementById('l-skills').value.split(',').map(t => t.trim()).filter(Boolean);
+  if (!name) return;
+  const id = 'l' + labCount;
+  const num = String(labCount).padStart(2, '0');
+  labCount++;
+  const skillsHtml = skills.map(s => `<span class="tag">${s}</span>`).join('');
+  const card = `<div class="lab-card" data-id="${id}">
+    <div class="lab-num">${num}</div>
+    <div class="lab-content">
+      <button class="delete-btn" onclick="deleteItem('lab-list','${id}')">✕</button>
+      <div class="lab-title">${name}</div>
+      <div class="lab-platform">${platform}</div>
+      <div class="lab-desc">${desc}</div>
+      <div class="lab-skills">${skillsHtml}</div>
+    </div>
+  </div>`;
+  document.getElementById('lab-list').insertAdjacentHTML('beforeend', card);
+  ['l-name','l-platform','l-desc','l-skills'].forEach(id => document.getElementById(id).value = '');
+  closeModal('modal-lab');
+}
+
+function deleteItem(listId, itemId) {
+  const el = document.querySelector(`#${listId} [data-id="${itemId}"]`);
+  if (el) el.remove();
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
